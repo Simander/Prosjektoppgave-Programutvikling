@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -92,13 +91,13 @@ class Teacher extends Person{
     
            
 }
-class Elev extends Person
+class Pupil extends Person
 {
     private String Instrument;
     private Teacher teacher;
     private Kurs kurs;
     //Konstruktør registrerer en ny elev ved skolen
-    public Elev(String n, String a, long t, long p)
+    public Pupil(String n, String a, long t, long p)
     {
         super(p, n, a, t);
     }
