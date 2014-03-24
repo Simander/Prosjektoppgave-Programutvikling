@@ -1,0 +1,19 @@
+Uke 14: Kravspesifikasjon
+
+En kravspesifikasjon skal inneholde en beskrivelse hvilke krav det settes til programmet og hvordan dere skal oppfylle dem:
+
+Hva skal programmet utføre? Hva slags funksjonalitet skal det ha?(use-case)
+Prioriteringsrekkefølge: Hva må kunne utføres, og hva kan gjøres hvis dere får tid?
+Skisse over brukergrensesnittet
+Hvordan skal programmet bygges opp? Hvilke moduler kan det deles inn i?
+Hvilke klasser (egendefinerte) skal brukes/programmeres?
+Hvordan er klassene relatert til hverandre? Super-/subklasser?
+Beskrivelse av klassehierarkiet ved hjelp av figurer
+Hva slags datastruktur er valgt? (Egne listerklasser eller klasser fra javas Collection-rammeverk)
+Beskrivelse av datastrukturen ved hjelp av figurer
+Hvilket utviklingsverktøy skal brukes?(TextPad, Eclipse, Netbeans?)
+Systemkrav til maskinen programmet skal kjøres på
+Hvilken Java-versjon skal brukes?
+Fremdriftsplan med milepæler
+Planlagt arbeidsfordeling. (NB! Programmeringsoppgavene skal fordeles tilnærmet likt mellom gruppens medlemmer.)
+Prosjektgruppene blir registrert i forbindelse med innlevering av kravspesifikasjonen. Den må derfor inneholde opplysninger om gruppedeltagerne (navn, studentnummer, linje og klasse).
