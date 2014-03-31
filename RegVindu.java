@@ -29,7 +29,7 @@ public class RegVindu extends JFrame
     private JButton list;   //Knapp for å liste opp alle personer.
     private PersonRegister personer;
     private JTextArea info;
-    GUI(PersonRegister p)
+    regVindu(PersonRegister p)
     {
         super("Kulturskolesystem 0.1"); //Header
         
