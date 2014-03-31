@@ -1,66 +1,62 @@
+
 import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.ListIterator;
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author anders
+ @author anders
  */
 public class Person 
 {
-    private long personalNum;
     private String name;
     private String address;
     private long telephoneNum;
-    
     Person next;
     //Konstruktør
-    Person(long p, String n, String a, long t)
+    Person(String n, String a, long t)
     {
-        personalNum = p;
+      
         name = n;
         address = a;
         telephoneNum = t;
-       
+        next = null;
                   
     }
     //metode for å hente ut personnummer
-    public long getpersonalNum()
+
+    public String getName()
     {
-        return personalNum;
+        return name;
     }
     //toString() metode
     public String toString()
     {
-        String s = "PersonNr: " + personalNum + "\nNavn: " + name + "\nAdresse: " + address + "\nTelefonNr: " + telephoneNum;
+        String s = "Navn: " + name + "\nAdresse: " + address + "\nTelefonNr: " + telephoneNum;
         return s;
     }
 }
 //Klasse som symboliserer lærere som en subklasse av person
 class Teacher extends Person{
+    private long personalNum;
     private String qualifications;
     private List<String> instruments = new ArrayList<>();
     private double salary;
     
 //Konstruktør
-    Teacher(long p, String n, String a, long t, String q, String i, double s)
+    Teacher(long p, String n, String a, long t, String q)
     {
-      super(p, n, a, t);
+      super(n, a, t);
+      personalNum = p;
       qualifications = q;
        }
+    public long getpersonalNum()
+    {
+        return personalNum;
+    }
     //metode for å sette lærerens instrumenter. Kan lagre flere i en arraylist
     public void setInstrument(String inst)
     {
-       
-        for(int i = 0; i < instruments.size(); i++)
-            if(instruments.get(i) == null)
-                instruments.set(i, inst);
+        instruments.add(inst);
     }
     //metode for å hente ut lærerens instrumenter
     public String getInstruments()
@@ -68,7 +64,7 @@ class Teacher extends Person{
         String s= "";
         for(int i = 0; i < instruments.size(); i++)
         {
-            s += instruments.get(i) + ", ";
+            s += instruments.get(i) + " ";
         }
         return s;
     }
@@ -85,7 +81,7 @@ class Teacher extends Person{
     //redefinert toString metode
     public String toString()
     {
-        String s = super.toString() + "\nKvalifikasjoner: " + qualifications + "\nInstrumenter: " + getInstruments();
+        String s = "Lærer: \nPersonNr: " + personalNum + "\n" + super.toString() + "\nKvalifikasjoner: " + qualifications + "\nInstrumenter: " + getInstruments();
         return s;
     }
     
@@ -93,16 +89,25 @@ class Teacher extends Person{
 }
 class Pupil extends Person
 {
-    private String Instrument;
+    private String studentcode;
+    private String instrument;
+    /*
     private Teacher teacher;
-    private Kurs kurs;
+    private Kurs kurs;*/
     //Konstruktør registrerer en ny elev ved skolen
-    public Pupil(String n, String a, long t, long p)
+    public Pupil(String s, String n, String a, long t, String i)
     {
-        super(p, n, a, t);
+        super(n, a, t);
+        instrument = i;
+        studentcode = s;
+        
+    }
+    public String getStudentcode()
+    {
+        return studentcode;
     }
     //Tildeler eleven en lærer
-    public void setTeacher(Teacher t)
+   /* public void setTeacher(Teacher t)
     {
         teacher = t;
     }
@@ -111,14 +116,15 @@ class Pupil extends Person
     {
         kurs = k;
     }
-    //redefinert toString()
+    //redefinert toString()*/
     public String toString()
     {
-        String s = super.toString();
-        if ( teacher != null)
-            s += "\nLærer: " + teacher;
+        String s = "Elev: \nStudentkode: " + studentcode + "\n" + super.toString();
+        s += "\nInstrument: " + instrument;
+       /* if ( teacher != null)
+            s += "\nLærer: " + teacher.getName();
         if( kurs != null)
-            s += "\nKurs: " + kurs;
+            s += "\nKurs: " + kurs;*/
         return s;
     }
 }
