@@ -1,4 +1,4 @@
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.*;
 import java.util.ListIterator;
@@ -6,8 +6,9 @@ import java.util.ListIterator;
 /*
  @author anders
  */
-public class Person 
+public class Person implements Serializable
 {
+    private static final long serialVersionUID = 1L;
     private String name;
     private String address;
     private long telephoneNum;
