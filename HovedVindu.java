@@ -10,7 +10,8 @@ import javax.swing.border.*;
 import java.io.*;
 public class HovedVindu extends JFrame implements ActionListener
 {
-    private PersonRegister pers;
+    //private PersonRegister pers;
+    private PersonListe pers;
     private RomListe rom;
     private BookingList booka;
     private InstrumentRegister iReg;
@@ -31,10 +32,13 @@ public class HovedVindu extends JFrame implements ActionListener
     private JMenuItem save;
     private JMenuItem exit;
     private JMenuItem doc;
-  
+    private JTextField sokeFelt;
     private JPanel panelL;
     private JPanel panelReg;
     private JPanel panelFind;
+    private SokeResultat hoho;
+    private JButton sokeKnapp;
+    private JButton show;
     private JButton menuButtons[];
     private final String names[] = {"Registrering", "Hent info", "Påmelding",
         "Booking", "Sletting", "Utleie"};
@@ -42,7 +46,7 @@ public class HovedVindu extends JFrame implements ActionListener
     
     String regToggle, findToggle, romToggle, bookToggle, instrumentToggle;
     
- public HovedVindu(PersonRegister p, RomListe r, BookingList b, InstrumentRegister ir)
+ public HovedVindu(/*PersonRegister*/PersonListe p, RomListe r, BookingList b, InstrumentRegister ir)
 {
         super( "Kulturskolesystem 0.01");
         //Layout
@@ -87,13 +91,15 @@ public class HovedVindu extends JFrame implements ActionListener
         exit.addActionListener(this);
         fileMenu.add(save);
         fileMenu.add(exit);
-        
+       
+   
         panelL = new JPanel();
         
         c.add(menuBar, BorderLayout.PAGE_START);
-    
+        
         c.add(panelL, BorderLayout.LINE_START);
         c.add(desktop, BorderLayout.CENTER);
+        
         desktop.setVisible(true);
         desktop.setBackground(Color.LIGHT_GRAY);
         c.setBackground(Color.DARK_GRAY);
@@ -107,7 +113,26 @@ public class HovedVindu extends JFrame implements ActionListener
         panelL.add( menuButtons[5]);
         panelL.setBackground(Color.LIGHT_GRAY);
         panelL.setLocation(0, 0);
+        panelFind = new JPanel();
+      
+        //desktop.add(hoho);
+        sokeFelt = new JTextField(15);
+        panelFind.add(sokeFelt);
+        sokeKnapp = new JButton("Søk");
+        show = new JButton("+");
+        sokeKnapp.setBackground(Color.DARK_GRAY);
+        sokeKnapp.setForeground(Color.white);
+        panelFind.add(sokeKnapp);
+        panelFind.add(show);
+         hoho = new SokeResultat();
+         hoho.setVisible(false);
         
+        sokeKnapp.addActionListener(this);
+        show.addActionListener(this);
+        desktop.setPreferredSize(new Dimension(100,200));
+        panelFind.setPreferredSize(new Dimension(32, 32));
+        menuBar.add(Box.createHorizontalGlue());
+        menuBar.add(panelFind);
         panelL.setPreferredSize(new Dimension(150, 100));
       
        
@@ -228,6 +253,27 @@ public class HovedVindu extends JFrame implements ActionListener
                instrumentToggle = "off";
             } 
         }
+        private void sok()
+        {
+           if(hoho.isVisible()==false)
+           { hoho.setVisible(true);
+            c.add(hoho, BorderLayout.LINE_END);
+     
+           }
+           findByName();
+            //desktop.add(hoho);
+           
+           // hoho.setBounds(0, 0, 200, 200)
+                    
+              // hoho.pack();
+              //  hoho
+              //          .setVisible(true);
+        }
+        private void findByName()
+        {
+           Person per = pers.finnPerson(sokeFelt.getText());
+           hoho.info.setText(per.toString());
+        }
         //Metode for å lese fra fil
         private void readFile()
 	{
@@ -238,29 +284,31 @@ public class HovedVindu extends JFrame implements ActionListener
                         ObjectInputStream inFile3 = new ObjectInputStream
                             (new FileInputStream("src/booking.data")))
 	    {
-	      pers = (PersonRegister) inFile.readObject();
+	      pers = (/*PersonRegister*/PersonListe) inFile.readObject();
               rom = (RomListe) inFile2.readObject();
               booka = (BookingList) inFile3.readObject();
-	 
+
 	    }
 	    catch(ClassNotFoundException cnfe)
 	    {
 	      //info.setText(cnfe.getMessage());
 	      //info.append("\nOppretter tom liste.\n");
-	      pers = new PersonRegister();
-	  
+	      //pers = new PersonRegister();
+                pers = new PersonListe();
+
 	    }
 	    catch(FileNotFoundException fne)
 	    {
 	      //info.setText("Finner ikke datafil. Oppretter tom liste.\n");
-	      pers = new PersonRegister();
-	     
+	      //pers = new PersonRegister();
+                pers = new PersonListe();
 	    }
 	    catch(IOException ioe)
 	    {
 	      //info.setText("Innlesingsfeil. Oppretter tom liste.\n");
-	      pers = new PersonRegister();
-	    
+	      //pers = new PersonRegister();
+                pers = new PersonListe();
+
 	    }
 	  }
 	//metode som skriver serialiserte data til fil
@@ -276,7 +324,7 @@ public class HovedVindu extends JFrame implements ActionListener
 			outFile.writeObject(pers);
                         outFile2.writeObject(rom);
                         outFile3.writeObject(booka);
-			
+
 		}
 		catch( NotSerializableException nse )
 		{
@@ -316,6 +364,8 @@ public class HovedVindu extends JFrame implements ActionListener
                 writeToFile();
                 JOptionPane.showMessageDialog(null, "Data er lagret!");
             }
+            else if(event.getSource() == sokeKnapp)
+                sok();
             else if(event.getSource() == exit)
             {
                 writeToFile();
