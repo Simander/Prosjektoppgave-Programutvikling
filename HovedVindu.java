@@ -11,12 +11,19 @@ import java.io.*;
 public class HovedVindu extends JFrame implements ActionListener
 {
     private PersonRegister pers;
+    private RomListe rom;
+    private BookingList booka;
+    private InstrumentRegister iReg;
     private BorderLayout layout;
     private Container c;
     private boolean regBooleanOn;
     JInternalFrame regVindu;
     JInternalFrame findVindu;
+    JInternalFrame romVindu;
+    JInternalFrame bookVindu;
+    JInternalFrame instrumentVindu;
     private JDesktopPane desktop = new JDesktopPane();
+    //private JPanel desktop = new JPanel();
     private JMenuBar menuBar;
     private JMenu fileMenu;
     private JMenu help;
@@ -30,12 +37,12 @@ public class HovedVindu extends JFrame implements ActionListener
     private JPanel panelFind;
     private JButton menuButtons[];
     private final String names[] = {"Registrering", "Hent info", "Påmelding",
-        "Booking", "Sletting"};
+        "Booking", "Sletting", "Utleie"};
  
     
-    String regToggle, findToggle;
+    String regToggle, findToggle, romToggle, bookToggle, instrumentToggle;
     
- public HovedVindu(PersonRegister p)
+ public HovedVindu(PersonRegister p, RomListe r, BookingList b, InstrumentRegister ir)
 {
         super( "Kulturskolesystem 0.01");
         //Layout
@@ -44,6 +51,9 @@ public class HovedVindu extends JFrame implements ActionListener
         c.setLayout( layout );
         //datafelter og objekter initialiseres
         pers = p;
+        rom = r;
+        booka = b;
+        iReg = ir;
         menuButtons = new JButton[names.length];
         for (int count = 0; count < names.length; count++)
         {
@@ -70,6 +80,9 @@ public class HovedVindu extends JFrame implements ActionListener
         exit = new JMenuItem("Avslutt og lagre");
         regToggle = "off";
         findToggle = "off";
+        romToggle = "off";
+        bookToggle = "off";
+        instrumentToggle = "off";
         save.addActionListener(this);
         exit.addActionListener(this);
         fileMenu.add(save);
@@ -91,6 +104,7 @@ public class HovedVindu extends JFrame implements ActionListener
         panelL.add( menuButtons[2]);
         panelL.add( menuButtons[3]);
         panelL.add( menuButtons[4]);
+        panelL.add( menuButtons[5]);
         panelL.setBackground(Color.LIGHT_GRAY);
         panelL.setLocation(0, 0);
         
@@ -128,7 +142,7 @@ public class HovedVindu extends JFrame implements ActionListener
            if(findToggle.equals("off"))
             {
                 menuButtons[1].setBackground(Color.RED); //Bytter farge op knapp
-                findVindu = new FinnVindu(pers); // Oppretter et nytt findVindu
+                findVindu = new FinnVindu(pers, booka); // Oppretter et nytt findVindu
                 desktop.add(findVindu); //Legger til i desktopPane
                 findVindu.isMaximum();
                 findVindu.setLocation(0, 0);
@@ -145,13 +159,88 @@ public class HovedVindu extends JFrame implements ActionListener
                 findToggle = "off";
             } 
         }
+       /* public void romConfig()
+        {
+           
+           if(romToggle.equals("off"))
+            {
+                menuButtons[2].setBackground(Color.RED); //Bytter farge op knapp
+                romVindu = new Booking(rom); // Oppretter et nytt findVindu
+                desktop.add(romVindu); //Legger til i desktopPane
+                romVindu.isMaximum();
+                romVindu.setLocation(0, 0);
+               
+                //regVindu.addInternalFrameListener();
+                romVindu.pack();
+                romVindu.setVisible(true);
+                romToggle = "on";
+            }
+            else
+            {   
+                menuButtons[2].setBackground(Color.DARK_GRAY);
+                romVindu.dispose(); //Kaster findVindu.
+               romToggle = "off";
+            } 
+        }*/
+        public void bookVindu()
+        {
+           
+           if(bookToggle.equals("off"))
+            {
+                menuButtons[3].setBackground(Color.RED); //Bytter farge op knapp
+                bookVindu = new RomBooking(rom, booka); // Oppretter et nytt findVindu
+                desktop.add(bookVindu); //Legger til i desktopPane
+                bookVindu.isMaximum();
+                bookVindu.setLocation(0, 0);
+               
+                //regVindu.addInternalFrameListener();
+                bookVindu.pack();
+                bookVindu.setVisible(true);
+                bookToggle = "on";
+            }
+            else
+            {   
+                menuButtons[3].setBackground(Color.DARK_GRAY);
+                bookVindu.dispose(); //Kaster findVindu.
+               bookToggle = "off";
+            } 
+        }
+        public void InstrumentVindu()
+        {
+           
+           if(instrumentToggle.equals("off"))
+            {
+                menuButtons[5].setBackground(Color.RED); //Bytter farge op knapp
+                instrumentVindu = new InstrumentGUI(iReg); // Oppretter et nytt findVindu
+                desktop.add(instrumentVindu); //Legger til i desktopPane
+                instrumentVindu.isMaximum();
+                instrumentVindu.setLocation(0, 0);
+               
+                //regVindu.addInternalFrameListener();
+                instrumentVindu.pack();
+                instrumentVindu.setVisible(true);
+                instrumentToggle = "on";
+            }
+            else
+            {   
+                menuButtons[5].setBackground(Color.DARK_GRAY);
+                instrumentVindu.dispose(); //Kaster findVindu.
+               instrumentToggle = "off";
+            } 
+        }
         //Metode for å lese fra fil
         private void readFile()
 	{
 		try (ObjectInputStream inFile = new ObjectInputStream(
-	            new FileInputStream( "src/personRegister.data" )))
+	            new FileInputStream( "src/personRegister.data" ));
+                        ObjectInputStream inFile2 = new ObjectInputStream
+                            (new FileInputStream("src/romliste.data"));
+                        ObjectInputStream inFile3 = new ObjectInputStream
+                            (new FileInputStream("src/booking.data")))
 	    {
 	      pers = (PersonRegister) inFile.readObject();
+              rom = (RomListe) inFile2.readObject();
+              booka = (BookingList) inFile3.readObject();
 	 
 	    }
 	    catch(ClassNotFoundException cnfe)
@@ -178,18 +267,26 @@ public class HovedVindu extends JFrame implements ActionListener
 	public void writeToFile()
 	{
 		try (ObjectOutputStream outFile = new ObjectOutputStream(
-				new FileOutputStream("src/personRegister.data")))
+				new FileOutputStream("src/personRegister.data"));
+                        ObjectOutputStream outFile2 = new ObjectOutputStream(
+                                new FileOutputStream("src/romliste.data"));
+                        ObjectOutputStream outFile3 = new ObjectOutputStream(
+                                new FileOutputStream("src/booking.data")))
 		{
 			outFile.writeObject(pers);
+                        outFile2.writeObject(rom);
+                        outFile3.writeObject(booka);
 			
 		}
 		catch( NotSerializableException nse )
 		{
 			//showErrorMsg("Objektet er ikke serialisert!");
+                    JOptionPane.showMessageDialog(null, "Objektet er ikke serialisert!");
 		}
 		catch( IOException ioe )
 		{
 			//showErrorMsg("Problem med utskrift til fil!");
+                    JOptionPane.showMessageDialog(null, "problem med utskrift til fil");
 		}
 	}
         //Lytteklasse for GUIs ulike knapper
@@ -206,12 +303,14 @@ public class HovedVindu extends JFrame implements ActionListener
                 //Åpner et vindu for å søke etter info
                  findInfo();
             }
-            else if(event.getSource() == menuButtons[2])
-                JOptionPane.showMessageDialog(null, "functioning partially!");
+            //else if(event.getSource() == menuButtons[2])
+            //   romConfig();
             else if(event.getSource() == menuButtons[3])
-                JOptionPane.showMessageDialog(null, "functioning partially!");
+               bookVindu();
             else if(event.getSource() == menuButtons[4])
                 JOptionPane.showMessageDialog(null, "functioning partially!");
+            else if(event.getSource() == menuButtons[5])
+                InstrumentVindu();
             else if(event.getSource() == save )
             {
                 writeToFile();
