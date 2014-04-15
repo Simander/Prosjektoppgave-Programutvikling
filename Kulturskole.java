@@ -1,4 +1,6 @@
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFrame;
 
 /**
@@ -10,8 +12,13 @@ public class Kulturskole {
     {
        
         PersonRegister personar = new PersonRegister();
+        RomListe rom = new RomListe();
+        BookingList booka = new BookingList();
+        InstrumentRegister iReg = new InstrumentRegister();
+        List<Rom> romliste = new ArrayList<>();
        // Oppretter ett nytt GUI av type HovedVindu
-        HovedVindu vindu = new HovedVindu(personar);
+      HovedVindu vindu = new HovedVindu(personar, rom, booka, iReg);
+       // Booking vindu = new Booking();
         //MasterWindow vindu = new MasterWindow();
         vindu.setVisible(true);
         vindu.setSize(670, 660);
