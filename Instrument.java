@@ -19,21 +19,20 @@ public class Instrument
     private String Extras; // Info om div. kabler etc.
     private String Condition; // Instrumentets tilstand
     private String Comments; // Eventuelle kommentarer
-    public Calendar regDate; // Kalender
+    private Calendar regDate; // Kalender
     DateFormat formata; // Kalender format
     Instrument next; // Neste
     private boolean utleid; // Boolean som returnerer true / false på ettetrspørrsel
-    public Calendar endDate;
-    
-    
-    public Instrument (String R, String T, String M, String E, String Co, String Comm) // Constructor
+    private Calendar endDate;
+    private Pupil leietaker;
+    private Calendar utleieperiode;
+   
+    public Instrument (String R, String T, String M, String Co) // Constructor
     {
         RegNum = R;
         Type = T;
         Model = M;
-        Extras = E;
         Condition = Co;
-        Comments = Comm;
         next = null;
     }
     
@@ -66,49 +65,54 @@ public class Instrument
     {
         return Comments;
     }
-    //public String getLeietaker()
-    //{
-      //  return leietaker;
-    //}
-    public String setLeietaker(person.getname())
+    
+    public void setLeietaker(Pupil p)
     {
-        String leietaker;
+        
        if (leietaker == null)
       {
-          leitaker = person.getname();
+          leietaker = p;
+          utleid = true;
       }
     }
     
+    public Pupil getLeietaker()
+    {
+        return leietaker;
+    }
+    public Boolean getUtleid()
+    {
+        return utleid;
+    }
+       
     public Calendar setUtleieStartDato() // Metode for å sette data ( satt til dagens dato)
     {
         regDate = Calendar.getInstance();
         return null;
     }
         
-    public Calendar setUtleieSluttDato(InstrumentGui.getUtleieSluttDato()) // <- sette inn dato som mottas av gui
-    {
-      Calendar UtleieSluttDato = InstrumentGui.getUtleieSluttDato();
-      return UtleieSluttDato;
-    }
-    public Calendar utleieperiode();// motta leieperide 
-    {
-        if (endDate == null || regDate = null)
-        {
-            return null;
-        }
-            else   
-           utleieperiode = endDate - regDate; 
-           return utleieperiode;
-    }
+   // public void Calendar setUtleieSluttDato(InstrumentGui.getUtleieSluttDato()) // <- sette inn dato som mottas av gui
+   // {
+   //   Calendar UtleieSluttDato = InstrumentGui.getUtleieSluttDato();
+   //   
+   // }
 
-    //Set metode for utleid utleid
-    
     public String toString() // Metode som returnerer info;
     {
-        return RegNum + "\n" +
-                Type + "\n" +
-                Model + "\n" +
-                Condition + "\n" +
-                Comments + "\n";   
+        String utskrift = "";
+        if (utleid != false)
+        {
+            utskrift  = "Status: " + "Opptatt" + "\n" +
+                        "Leietaker:" + leietaker + "\n";
+        }
+        else
+            utskrift = "Status: " + "Ledig" +"\n";
+        
+           utskrift += "InstrumentNR: " + RegNum + "\n" +
+                       "Instrument Type: " + Type + "\n" +
+                       "Model: " + Model + "\n" +
+                       "Tilstand: " + Condition + "\n" +
+                       "Kommentarer: " + Comments + "\n"; 
+      return utskrift;
     }
 }
