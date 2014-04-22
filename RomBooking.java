@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
  * @author anders
@@ -20,7 +14,7 @@ import javax.swing.table.*;
 import javax.swing.JTable;
 import java.io.*;
 import java.text.*;
-public class RomBookingVindu extends JInternalFrame implements Serializable 
+public class RomBooking extends JPanel implements Serializable 
 {
     private static final long serialVersionUID = 1L;
     private RomListe rom;
@@ -40,19 +34,19 @@ public class RomBookingVindu extends JInternalFrame implements Serializable
    // private JButton oppdater;
     private JPanel top;
     private JPanel bottom;
-     DefaultTableModel model = new DefaultTableModel(); 
-        JTable table = new JTable(model); 
+     DefaultTableModel modell = new DefaultTableModel(); 
+        JTable table = new JTable(modell); 
       private List<Object> booking; 
-    RomBookingVindu(RomListe r, BookingList b)
+    RomBooking(RomListe r, BookingList b)
     {
-        super("Rombooking!");
+        //super("Rombooking!");
         rom = r;
         booka = b;
         String[] kolonneNavn = {"Dato","RomId", "Kurs/Formål", "Opptatt til:"};
-        model.addColumn("Dato:");
-        model.addColumn("RomId:");
-        model.addColumn("Kurs/Formål:");
-        model.addColumn("Opptatt til:");
+        modell.addColumn("Dato:");
+        modell.addColumn("RomId:");
+        modell.addColumn("Kurs/Formål:");
+        modell.addColumn("Opptatt til:");
         lyttRB = new LyttRB();
         dag = new JTextField(2);
         måned = new JTextField(2);
@@ -63,12 +57,12 @@ public class RomBookingVindu extends JInternalFrame implements Serializable
         add = new JButton("book");
         clearOld = new JButton("Fjern gamle");
         //oppdater = new JButton("oppdater");
-        Container c = getContentPane();
+       // Container c = getContentPane();
         top = new JPanel();
         bottom = new JPanel();
-        c.setLayout(new FlowLayout() );
-        c.add(top);
-        c.add(bottom);
+        setLayout(new FlowLayout() );
+        add(top);
+        add(bottom);
         top.add(new JLabel("Dag:"));
         top.add(dag);
         top.add(new JLabel("Måned:"));
@@ -85,9 +79,9 @@ public class RomBookingVindu extends JInternalFrame implements Serializable
         bottom.add(clearOld);
         //bottom.add(oppdater);
         bottom.add(new JScrollPane(table));
-        top.setPreferredSize(new Dimension(280, 75));
+        top.setPreferredSize(new Dimension(320, 75));
         bottom.setPreferredSize(new Dimension(480, 500));
-        c.setPreferredSize(new Dimension(480, 550));
+        setPreferredSize(new Dimension(480, 550));
         table.setVisible(true);
         add.addActionListener(lyttRB);
         clearOld.addActionListener(lyttRB);
@@ -122,7 +116,7 @@ public class RomBookingVindu extends JInternalFrame implements Serializable
         Calendar cal = Calendar.getInstance();
         Date now = cal.getTime();
         if(now.before(date.getTime()))
-        {   model.addRow(new String[]{data, id, formål, b});
+        {   modell.addRow(new String[]{data, id, formål, b});
             String[] bookingData ={data, id, formål, b};
             booka.settInnData(bookingData);
         }
@@ -147,7 +141,7 @@ public class RomBookingVindu extends JInternalFrame implements Serializable
            Calendar now = Calendar.getInstance();
            Date n = now.getTime();
            if(n.before(da2))
-            model.addRow(list1[i]);
+            modell.addRow(list1[i]);
           
         }
         }
