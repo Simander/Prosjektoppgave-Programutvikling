@@ -1,3 +1,8 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 /**
  *
  * @author simander
@@ -5,33 +10,41 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+    import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 public class SokeResultat extends JPanel
 {
     private Hidelytter hL;
     private JButton hide;
     public JTextArea info;
-    public JPanel content;
+    public JPanel beholder;
     
-         DefaultTableModel model = new DefaultTableModel(); 
-        JTable elevTable = new JTable(model); 
-  
+    public DefaultTableModel model = new DefaultTableModel(); 
+    public JTable elevTable;
+    JScrollPane scrollmo;
     
     SokeResultat()
     {
+        model.addColumn("ElevId:");
+        model.addColumn("Navn:");
+        model.addColumn("Adresse:");
+        model.addColumn("Tlf:");
+        model.addColumn("Instrument:");
+        elevTable = new JTable(model);
+       // elevTable.setPreferredScrollableViewportSize(new Dimension(40,40));
+        //elevTable.setPreferredSize(new Dimension(600,600));
         hide = new JButton("Skjul vinduet.");
-        content = new JPanel();
-        info = new JTextArea(20, 20);
-       add(content);
+        beholder = new JPanel();
+        info = new JTextArea(10, 40);
+       add(beholder);
          
-        content.add(info);
-        content.add(hide);
-        content.setLayout(new FlowLayout());
-        content.setPreferredSize(new Dimension(600,600));
-        content.setBackground(Color.DARK_GRAY);
+        beholder.add(info);
+        add(hide);
+        beholder.setLayout(new FlowLayout());
+        
+        beholder.setBackground(Color.DARK_GRAY);
         hL = new Hidelytter();
-        content.setVisible(true);
+        beholder.setVisible(true);
         info.setVisible(true);
         setVisible(true);
        // Container c = getContentPane();
@@ -39,15 +52,15 @@ public class SokeResultat extends JPanel
         //c.add(content);
         //c.add(hide);
         setLayout(new FlowLayout());
-        //setPreferredSize(new Dimension(400, 600));
-      
-        model.addColumn("ElevId:");
-        model.addColumn("Navn:");
-        model.addColumn("Adresse:");
-        model.addColumn("Tlf:");
-        model.addColumn("Instrument:");
-        content.add(new JScrollPane(elevTable));
+      beholder.setPreferredSize(new Dimension(600, 400));
+        setBackground(Color.DARK_GRAY);
+       scrollmo = new JScrollPane(elevTable);
+       //scrollmo.setPreferredSize(new Dimension(800,800));
+        beholder.add(scrollmo);
+        //content.setPreferredSize(new Dimension(600,600));
         elevTable.setVisible(false);
+        info.setVisible(false);
+     //   elevTable.setSize(400, 600);
         hide.addActionListener(hL);
     }
      private class Hidelytter implements ActionListener
@@ -61,3 +74,5 @@ public class SokeResultat extends JPanel
         }
     }
 }
+
+    
