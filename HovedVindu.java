@@ -26,7 +26,7 @@ public class HovedVindu extends JFrame implements ActionListener
     private JInternalFrame findVindu;
     private JInternalFrame romVindu;
     private JPanel bookVindu;
-    JInternalFrame instrumentVindu;
+    private JPanel instrumentVindu;
  //   private JDesktopPane desktop = new JDesktopPane();
     //private JPanel desktop = new JPanel();
     private JMenuBar menuBar;
@@ -40,7 +40,7 @@ public class HovedVindu extends JFrame implements ActionListener
     private JPanel panelL;
     private GUI2 panelReg;
     private JPanel panelFind;
-    private SokeResultat hoho;
+    private SokeResultat sokePanel;
     private JButton sokeKnapp;
     private JButton show;
     private JButton menuButtons[];
@@ -63,7 +63,7 @@ public class HovedVindu extends JFrame implements ActionListener
         layout = new BorderLayout(5, 5);
         c = getContentPane();
         c.setLayout( layout );
-       // setLocation(0, 0);
+        
         //datafelter og objekter initialiseres
         pers = p;
         rom = r;
@@ -83,7 +83,7 @@ public class HovedVindu extends JFrame implements ActionListener
         //Meny greier
         menuBar = new JMenuBar();
         fileMenu = new JMenu("Fil");
-      //  menuBar.setLayout(new FlowLayout());
+        //  menuBar.setLayout(new FlowLayout());
         menuBar.add(fileMenu);
         //sub menyer
         help = new JMenu("Hjelp");
@@ -112,6 +112,7 @@ public class HovedVindu extends JFrame implements ActionListener
      //   desktop.setVisible(true);
        // desktop.setBackground(Color.LIGHT_GRAY);
         c.setBackground(Color.DARK_GRAY);
+        //Venstre menybar
         panelL.setLayout(new FlowLayout());
         panelL.add(new JLabel("AV/PÅ"));
         panelL.add( menuButtons[0]);
@@ -133,9 +134,9 @@ public class HovedVindu extends JFrame implements ActionListener
         sokeKnapp.setForeground(Color.white);
         panelFind.add(sokeKnapp);
     
-         hoho = new SokeResultat();
-         hoho.setVisible(false);
-         hoho.setBounds(100,0,600,600);
+         sokePanel = new SokeResultat();
+      
+        
         
         sokeKnapp.addActionListener(this);
    //     desktop.setPreferredSize(new Dimension(100,200));
@@ -152,22 +153,34 @@ public class HovedVindu extends JFrame implements ActionListener
         sokeFelt.setLocation(x-200, 0);
      
         panelL.setPreferredSize(new Dimension(lX, y));
-       
-         regVindu = new GUI2(pers);
-         regVindu.setVisible(false);
+            //Instansierer og skjuler paneler
+            regVindu = new GUI2(pers);
+            regVindu.setVisible(false);
+            
             bookVindu = new RomBooking(rom, booka);
             bookVindu.setVisible(false);
+            instrumentVindu = new InstrumentGUI(iReg);
+            instrumentVindu.setVisible(false);
        regVindu.setLocation(lX, y-4);
          center.add(regVindu);//CENTER);.
          center.add(bookVindu);
+         center.add(instrumentVindu);
+         
          layPane = new JLayeredPane();
-         layPane.setPreferredSize(new Dimension(500, 500));
+         //layPane.setBounds(0,0, 600, 600);
+         
+         layPane.setPreferredSize(new Dimension(x, y));
          c.add(layPane, BorderLayout.CENTER);
          center.setLayout(new FlowLayout());
+         sokePanel.setLayout(new FlowLayout());
+         sokePanel.setVisible(false);
         // center.setLocation(0,0);
+         
          center.setBounds(0,0, 600,y-4);
-         layPane.add(center, 0);
-          layPane.add(hoho, 1);
+          sokePanel.setBounds(0,0,800,y-4);
+          sokePanel.beholder.setSize(800,800);
+         layPane.add(center,new Integer(0));
+         layPane.add(sokePanel,new Integer(1));
         // layPane.setVisible(true);
          //center.setVisible(true);
          
@@ -192,52 +205,7 @@ public class HovedVindu extends JFrame implements ActionListener
                 toggle[0] ="off";
             }
         }
-        public void findInfo()
-        {
-           
-           if(findToggle.equals("off"))
-            {
-                menuButtons[1].setBackground(Color.RED); //Bytter farge op knapp
-                findVindu = new FinnVindu(pers, booka); // Oppretter et nytt findVindu
-            //    desktop.add(findVindu); //Legger til i desktopPane
-                findVindu.isMaximum();
-                findVindu.setLocation(0, 0);
-               
-                //regVindu.addInternalFrameListener();
-                findVindu.pack();
-                findVindu.setVisible(true);
-                findToggle = "on";
-            }
-            else
-            {   
-                menuButtons[1].setBackground(Color.DARK_GRAY);
-                findVindu.dispose(); //Kaster findVindu.
-                findToggle = "off";
-            } 
-        }
-       /* public void romConfig()
-        {
-           
-           if(romToggle.equals("off"))
-            {
-                menuButtons[2].setBackground(Color.RED); //Bytter farge op knapp
-                romVindu = new Booking(rom); // Oppretter et nytt findVindu
-                desktop.add(romVindu); //Legger til i desktopPane
-                romVindu.isMaximum();
-                romVindu.setLocation(0, 0);
-               
-                //regVindu.addInternalFrameListener();
-                romVindu.pack();
-                romVindu.setVisible(true);
-                romToggle = "on";
-            }
-            else
-            {   
-                menuButtons[2].setBackground(Color.DARK_GRAY);
-                romVindu.dispose(); //Kaster findVindu.
-               romToggle = "off";
-            } 
-        }*/
+        
         public void bookVindu()
         {
            
@@ -260,21 +228,15 @@ public class HovedVindu extends JFrame implements ActionListener
            
            if(toggle[4].equals("off"))
             {
+                hideAll();
                 menuButtons[4].setBackground(Color.RED); //Bytter farge op knapp
-                instrumentVindu = new InstrumentGUI(iReg); // Oppretter et nytt findVindu
-        //        desktop.add(instrumentVindu); //Legger til i desktopPane
-                instrumentVindu.isMaximum();
-                instrumentVindu.setLocation(0, 0);
-               
-                //regVindu.addInternalFrameListener();
-                instrumentVindu.pack();
                 instrumentVindu.setVisible(true);
                 toggle[4] = "on";
             }
             else
             {   
                 menuButtons[4].setBackground(Color.DARK_GRAY);
-                instrumentVindu.dispose(); //Kaster findVindu.
+                hideAll();
                toggle[4] = "off";
             } 
         }
@@ -282,6 +244,7 @@ public class HovedVindu extends JFrame implements ActionListener
         {
             regVindu.setVisible(false);
             bookVindu.setVisible(false);
+            instrumentVindu.setVisible(false);
             for(int i = 0; i < menuButtons.length; i++)
             {
                 menuButtons[i].setBackground(Color.DARK_GRAY);
@@ -291,38 +254,38 @@ public class HovedVindu extends JFrame implements ActionListener
         }
         private void sok()
         {
-               LinkedList popo = (LinkedList) pers.getElevliste();
+               LinkedList elevListe = (LinkedList) pers.getElevliste();
                // JOptionPane.showMessageDialog(null,""+x+","+y );
            
-            hoho.content.setPreferredSize(new Dimension(300, y-4));
+            sokePanel.beholder.setPreferredSize(new Dimension(400, y));
           //  hoho.setBounds
-           if(hoho.isVisible()==false)
-           { hoho.setVisible(true);
-          // hoho.setBounds(x-300, 4, 300,y-4);
+           if(sokePanel.isVisible()==false)
+           { sokePanel.setVisible(true);
+           // hoho.setBounds(x-300, 4, 300,y-4);
            
             //hoho.setLocation(x-300, 4);
             
      
            }
            if(sokeFelt.getText().matches("elev.*"))
-           {//    finnElever();
-               hoho.elevTable.setVisible(false);
-                if(popo.size() > oppdatert)
+           {   //    finnElever();
+               sokePanel.elevTable.setVisible(true);
+                if(elevListe.size() > oppdatert)
                 {
-                    for(int i = 0; i < popo.size(); i++)
+                    for(int i = 0; i < elevListe.size(); i++)
                     {
-                        Pupil temp = (Pupil) popo.get(i);
+                        Pupil temp = (Pupil) elevListe.get(i);
                         String[] tempRow = temp.getElevData();
-                        hoho.model.addRow(tempRow);
-                        hoho.elevTable.setVisible(true);
-                        oppdatert = popo.size();
+                        sokePanel.model.addRow(tempRow);
+                       // hoho.elevTable.setVisible(true);
+                        oppdatert = elevListe.size();
                     }
                 }
                
            }
             else 
            { 
-               hoho.elevTable.setVisible(false);
+               sokePanel.elevTable.setVisible(false);
                
                findByName();
            }
@@ -335,12 +298,12 @@ public class HovedVindu extends JFrame implements ActionListener
         private void findByName()
         {
            Person per = pers.finnPerson(sokeFelt.getText());
-           hoho.info.setText(per.toString());
+           sokePanel.info.setText(per.toString());
         }
         private void finnElever()
         {
             String s = pers.listElever();
-            hoho.info.setText(s);
+            sokePanel.info.setText(s);
         }
         //Metode for å lese fra fil
         private void readFile()
@@ -445,5 +408,3 @@ public class HovedVindu extends JFrame implements ActionListener
             layout.layoutContainer( c );
             
         }
-        
-}
