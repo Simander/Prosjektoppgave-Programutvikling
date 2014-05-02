@@ -20,7 +20,7 @@ public class RomBooking extends JPanel implements Serializable
     private PersonListe perList;
     private RomListe romList;
     private KursListe kursList;
-    private BookingListe booka;
+    private BookingListe bookList;
     private Calendar calender;
     public SimpleDateFormat dFormat = new SimpleDateFormat("dd/MM | HH:mm");
     private LyttRB lyttRB;
@@ -37,7 +37,7 @@ public class RomBooking extends JPanel implements Serializable
     private String[] idRom;
     private String[] idKurs;
     private String[] bookingTid = {"30min", "45min", "60min", "90min", "120min"};
-    private JComboBox idRomList;
+    private JComboBox idRomListe;
     private JComboBox idKursList;
     private JComboBox bVarighet;
    // private JButton oppdater;
@@ -56,29 +56,31 @@ public class RomBooking extends JPanel implements Serializable
         perList = p;
         romList = r;
         kursList = k;
-        booka = b;
+        bookList = b;
         //Verdier til JComboBoxes
         idRom = romList.romStrings();
         idKurs = kursList.kursStrings();
               
         //setter Kolonner til bookingTable;
-        modell.addColumn("Dato:");
         modell.addColumn("RomId:");
-        modell.addColumn("Kurs/Formål:");
-        modell.addColumn("Opptatt til:");
+        modell.addColumn("Dato");
+        modell.addColumn("Fra:");
+        modell.addColumn("Til:");
+        modell.addColumn("KursId:");
+        modell.addColumn("Ansvarlig:");
         lyttRB = new LyttRB();
         dag = new JTextField(2);
         måned = new JTextField(2);
         time = new JTextField (2);
         minutt = new JTextField(2);
         personId = new JTextField(15);
-        idRomList = new JComboBox(idRom);//romId = new JTextField(20);
+        idRomListe = new JComboBox(idRom);//romId = new JTextField(20);
         idKursList = new JComboBox(idKurs);
         bVarighet = new JComboBox(bookingTid);
        // idRomList.setPreferredSize(new Dimension(20,20));
         bruk = new JTextField(17);
-        add = new JButton("book");
-        clearOld = new JButton("Fjern gamle");
+        add = new JButton("Book");
+      //  clearOld = new JButton("Fjern gamle");
         //oppdater = new JButton("oppdater");
        // Container c = getContentPane();
         top = new JPanel();
@@ -98,7 +100,7 @@ public class RomBooking extends JPanel implements Serializable
         top.add(new JLabel(":"));
         top.add(minutt);
         paRom.add(new JLabel("RomId:"));
-        paRom.add(idRomList);
+        paRom.add(idRomListe);
         paKurs.add(new JLabel("Kurs:"));
         paKurs.add(idKursList);
         paVarighet.add(new JLabel("Varighet:"));
@@ -109,30 +111,45 @@ public class RomBooking extends JPanel implements Serializable
         top.add(paKurs);
         top.add(paVarighet);
         bottom.add(add);
-        bottom.add(clearOld);
+        add.setPreferredSize(new Dimension(80,25));
+       // bottom.add(clearOld);
         //bottom.add(oppdater);
-        bottom.add(new JScrollPane(table));
+        JScrollPane scrollBookTable = new JScrollPane(table);
+        bottom.add(scrollBookTable);
         top.setPreferredSize(new Dimension(320, 122));
         bottom.setPreferredSize(new Dimension(480, 500));
         setPreferredSize(new Dimension(480, 550));
         table.setVisible(true);
+        
+        scrollBookTable.setPreferredSize(new Dimension(400, 350));
         add.addActionListener(lyttRB);
-        clearOld.addActionListener(lyttRB);
+       // clearOld.addActionListener(lyttRB);
+        addToBookingTable();
+        
+        
+       // fjernGamal();
         //oppdater.addActionListener(lyttRB);
         //();
         
         
         
-    }
+    }/*
     public void setIdRomList(String[] s)
     {
-        idRomList = new JComboBox(s);
+        idRomListe = new JComboBox(s);
     }
     public void setIdKursList(String[] s)
     {
-        idRomList = new JComboBox(s);
+        idRomListe = new JComboBox(s);
+    }*/
+    public void addToBookingTable()
+    {
+        String[][] temp = bookList.getBookingTableData();
+        for(int i = temp.length -1; i >= 0; i--)
+        {
+            modell.addRow(temp[i]);
+        }
     }
-    
    
     //Metode for å legge til en rad med bookingdata
     public void addRow()
@@ -151,89 +168,70 @@ public class RomBooking extends JPanel implements Serializable
         date.set(Calendar.HOUR_OF_DAY, t);
         date.set(Calendar.MINUTE, min);
         date.set(Calendar.SECOND, s);
-        //Startdato booking Date objekt settes lik date.getTime();
-        Date start = date.getTime();
-      // String data = dFormat.format(date.getTime());//
-        //Oppretter et calendar objekt for sluttdato
-        Calendar sluttDato = date;
+        
+        Date start = date.getTime();    //Startdato booking Date objekt settes lik date.getTime();
+        Calendar sluttDato = date;  //Oppretter et calendar objekt for sluttdato
         //Henter innkommende tid og legger til antall minutter valgt
         String tid = (String)bVarighet.getSelectedItem();
-        if(tid.equalsIgnoreCase("30"))
+        if(tid.equalsIgnoreCase("30min"))
             sluttDato.add(Calendar.MINUTE, 30);
-        else if(tid.equalsIgnoreCase("45"))
+        else if(tid.equalsIgnoreCase("45min"))
             sluttDato.add(Calendar.MINUTE, 45);
-        else if(tid.equalsIgnoreCase("60"))
+        else if(tid.equalsIgnoreCase("60min"))
             sluttDato.add(Calendar.MINUTE, 60);
-        else if(tid.equalsIgnoreCase("90"))
+        else if(tid.equalsIgnoreCase("90min"))
             sluttDato.add(Calendar.MINUTE, 90);
-        else if(tid.equalsIgnoreCase("120"))
+        else if(tid.equalsIgnoreCase("120min"))
             sluttDato.add(Calendar.MINUTE, 120);
         //Sluttdato
-        Date end = sluttDato.getTime();
-        
-        //String b = dFormat.format(sluttDato.getTime());        
+        Date end = sluttDato.getTime(); //Ekte sluttdato for bookingen
+        Calendar fakeSluttDato = sluttDato;
+
+        fakeSluttDato.add(Calendar.MINUTE, -1);
+        Date fakeEnd = fakeSluttDato.getTime(); //Falsk sluttdato, et minutt før Date end, brukes til å sjekke dobbelbooking
+             
         Date now = Calendar.getInstance().getTime(); //Tidspunktet nå
        
-        if(now.before(date.getTime()))
+        
+        //Dersom tidspunktet now er mindre eller lik startdato
+        if(now.compareTo(start) <= 0)
         {   
-           // String[] bookingData ={data, rId, kId, b};
-          
-           String rId = (String)idRomList.getSelectedItem();
+           String romID = idRomListe.getSelectedItem().toString();
            String kId = (String)idKursList.getSelectedItem();
-           Rom bRom = romList.finnRom(rId);
+           Rom bRom = romList.finnRom(romID);
            Kurs bKurs = kursList.finnKurs(kId);
            Person per = perList.finnPerson(personId.getText());
-          
-          //modell.addRow(new String[]{data, rId, kId, b});
-           
-           Booking ny = new Booking(bRom, bKurs, per, start, end);
-           booka.settInnBooking(ny);
-           
-         //   booka.settInnData(bookingData);
+          //JOptionPane.showMessageDialog(null, start.toString() + "+"+end.toString() + "+"+realEnd.toString());
+           if(bookList.checkIfOverlap(romID, start, end) == false)
+           {
+               Booking ny = new Booking(bRom, bKurs, per, start, end, fakeEnd);
+               bookList.settInnBooking(ny);
+               modell.setRowCount(0);
+               addToBookingTable();
+           }
+           else 
+            JOptionPane.showMessageDialog(null, "Rommet er ikke ledig ved det ønskede tidspunktet!");
         }
         else{JOptionPane.showMessageDialog(null, "Du kan ikke booke et rom i fortiden!");}
         //JOptionPane.showMessageDialog(null, date.getTime());
     }
-    //metode som laster inn rader fra Array til JTable hvor kurs enten pågår eller ikke har begynt
-  /*  public void tablius() 
+    public void fjernGamal()
     {
-        try{
-        String[][] list1 = booka.hentListeData();
-       
-        for(int i = 0; i < list1.length; i++)
-        {
-          
-          String[] lista = list1[i];
-           String d1 = "2014/"+lista[0];
-           //JOptionPane.showMessageDialog(null, d1);
-            String d2 = "2014/"+lista[3]+":00";
-           //Date da1 = new SimpleDateFormat("yyyy/dd/MM | HH:mm").parse(d1);
-           Date da2 = new SimpleDateFormat("yyyy/dd/MM | HH:mm:ss").parse(d2);
-           Calendar now = Calendar.getInstance();
-           Date n = now.getTime();
-           if(n.before(da2))
-            modell.addRow(list1[i]);
-          
-        }
-        }
-        catch(ParseException e)
-        {
-             JOptionPane.showMessageDialog(null,"Det oppsto en feil!");
-        }
-        
-    
+        bookList.fjernGamleBooking();
+         modell.setRowCount(0);
+               addToBookingTable();
     }
-    */
+
+    //privat lytteklasse for panelet
     private class LyttRB implements ActionListener
     {
         public void actionPerformed (ActionEvent e )
         {
              if (e.getSource() == add)
                  addRow();
-             //else if(e.getSource() == clearOld)
-               //  booka.removeOldBooking();
-            // else if(e.getSource() == oppdater)
-              //   tablius();
+             else if(e.getSource() == clearOld)
+               fjernGamal();
+
         }
     }
 }
