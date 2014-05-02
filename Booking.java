@@ -19,20 +19,26 @@ public class Booking implements Serializable
     private Person person;
     private Date startdato;
     private Date sluttdato;
-    private String[] bookingTable = new String[5];
-    public SimpleDateFormat dFormat = new SimpleDateFormat("dd/MM | HH:mm");
-    Booking(Rom r, Kurs k, Person p, Date start, Date slutt)
+    private Date sluttarVerdi;
+    private String[] bookingTable = new String[6];
+   // public SimpleDateFormat dFormat = new SimpleDateFormat("dd/MM | HH:mm");
+    public SimpleDateFormat dFormat = new SimpleDateFormat("dd/MM");
+    public SimpleDateFormat tFormat = new SimpleDateFormat("HH:mm");
+    Booking(Rom r, Kurs k, Person p, Date start, Date slutt, Date realEnd)
     {
         rom = r;
         kurs = k;
         person = p;
         startdato = start;
         sluttdato = slutt;
+        sluttarVerdi = realEnd; //Date variabel lik sluttdato - ett minutt, for metode checkIfOverlap
         bookingTable[0] = rom.getRomId();
-        bookingTable[1] = kurs.getKursId();
-        bookingTable[2] = person.getName();
-        bookingTable[3] = dFormat.format(start);
-        bookingTable[4] = dFormat.format(slutt);
+        bookingTable[1] = dFormat.format(start);
+        bookingTable[2] = tFormat.format(start);
+        bookingTable[3] = tFormat.format(slutt);
+        bookingTable[4] = kurs.getKursId();
+        bookingTable[5] = person.getName();
+      
         
        
     }
@@ -60,5 +66,10 @@ public class Booking implements Serializable
     public Date getSluttDato()
     {
         return sluttdato;
+    }
+    //
+    public Date getFakeEnd()
+    {
+        return sluttarVerdi;
     }
 }
