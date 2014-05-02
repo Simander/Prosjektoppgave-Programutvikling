@@ -17,6 +17,8 @@ public class HovedVindu extends JFrame implements ActionListener
     private KursListe kurs;
     private BookingListe booka;
     private InstrumentRegister iReg;
+    private UtleieListe utleie;
+    private Historikk hist;
     private BorderLayout layout;
     private Container c;
     private boolean regBooleanOn;
@@ -24,15 +26,17 @@ public class HovedVindu extends JFrame implements ActionListener
     private JPanel center;
     private JLayeredPane layPane;
     private JPanel regMenu;
-    private JInternalFrame findVindu;
+    private JPanel slettPanel;
     private JPanel romPanel;
     private RomBooking bookVindu;
-    private JPanel instrumentVindu;
+    private JPanel utleieVindu;
+   
  //   private JDesktopPane desktop = new JDesktopPane();
     //private JPanel desktop = new JPanel();
     private JMenuBar menuBar;
     private JMenu fileMenu;
     private JMenu help;
+    private JMenuItem logg;
     private JMenuItem about;
     private JMenuItem save;
     private JMenuItem exit;
@@ -46,7 +50,7 @@ public class HovedVindu extends JFrame implements ActionListener
     private JButton show;
     private JButton menuButtons[];
     private final String names[] = {"Registrering", "Påmelding",
-        "Booking", "Sletting", "Utleie", "Rom-register"};
+        "Booking", "Utleie", "Sletting"};
     private String toggle[] = new String[names.length];
  
         private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -56,9 +60,9 @@ public class HovedVindu extends JFrame implements ActionListener
        private int oppdatert;
     
     
- public HovedVindu(/*PersonRegister*/PersonListe p, RomListe r, BookingListe b, KursListe k, InstrumentRegister ir)
+ public HovedVindu(/*PersonRegister*/PersonListe p, RomListe r, BookingListe b, KursListe k, InstrumentRegister ir, UtleieListe ut, Historikk h)
 {
-        super( "Kulturskolesystem 0.01");
+        super( "Kulturskolesystem 0.013");
         
         //Layout
         layout = new BorderLayout(5, 5);
@@ -71,6 +75,9 @@ public class HovedVindu extends JFrame implements ActionListener
         booka = b;
         kurs = k;
         iReg = ir;
+        utleie = ut;
+        hist = h;
+        
         readFile(); //leser data fra fil
 
         //Meny greier
@@ -87,10 +94,13 @@ public class HovedVindu extends JFrame implements ActionListener
         about = new JMenuItem("Om");
         about.addActionListener(this);
         help.add(about);
+        logg = new JMenuItem("Logg");
         save = new JMenuItem("Lagre");
         exit = new JMenuItem("Avslutt og lagre");
+        logg.addActionListener(this);
         save.addActionListener(this);
         exit.addActionListener(this);
+        fileMenu.add(logg);
         fileMenu.add(save);
         fileMenu.add(exit);
         oppdatert = 0;
@@ -152,22 +162,24 @@ public class HovedVindu extends JFrame implements ActionListener
      
         panelL.setPreferredSize(new Dimension(lX, y));
             //Instansierer og skjuler paneler
-            regMenu = new RegMenu(pers, kurs, rom);
+            regMenu = new RegMenu(pers, kurs, rom, iReg);
             regMenu.setVisible(false);
           //  regMenu.setPreferredSize(new Dimension(40, ))
             
             bookVindu = new RomBooking(pers, rom, booka, kurs);
             bookVindu.setVisible(false);
-            instrumentVindu = new InstrumentGUI(iReg);
-            instrumentVindu.setVisible(false);
             romPanel = new RomGUI(rom);
             romPanel.setVisible(false);
+            slettPanel = new SlettGUI(pers, rom, booka, kurs, iReg);
+            slettPanel.setVisible(false);
+            utleieVindu = new UtleieGUI(iReg,pers,utleie);
+            utleieVindu.setVisible(false);
          regMenu.setLocation(0, 0);
          center.add(regMenu);//CENTER);.
          center.add(bookVindu);
-         center.add(instrumentVindu);
+         center.add(utleieVindu);
          center.add(romPanel);
-         
+         center.add(slettPanel);
          layPane = new JLayeredPane();
          layPane.setBounds(0,0, 650, y);
          
@@ -219,10 +231,11 @@ public class HovedVindu extends JFrame implements ActionListener
            {
                   hideAll();
                   String[] temp = rom.romStrings();
-                  bookVindu.setIdRomList(temp);
+                  //bookVindu.setIdRomList(temp);
                  // bookVindu.
                 menuButtons[2].setBackground(Color.RED); //Bytter farge op knapp
                 bookVindu.setVisible(true);
+                bookVindu.fjernGamal();
                 toggle[2] = "on";
            }
            else
@@ -232,14 +245,32 @@ public class HovedVindu extends JFrame implements ActionListener
            }
  
         }
-        public void InstrumentVindu()
+        public void utleieVindu()
+        {
+           
+           if(toggle[3].equals("off"))
+            {
+                hideAll();
+                menuButtons[3].setBackground(Color.RED); //Bytter farge op knapp
+                utleieVindu.setVisible(true);
+                toggle[3] = "on";
+            }
+            else
+            {   
+                menuButtons[3].setBackground(Color.DARK_GRAY);
+                hideAll();
+               toggle[3] = "off";
+            } 
+        }
+
+        public void SlettVindu()
         {
            
            if(toggle[4].equals("off"))
             {
                 hideAll();
                 menuButtons[4].setBackground(Color.RED); //Bytter farge op knapp
-                instrumentVindu.setVisible(true);
+                slettPanel.setVisible(true);
                 toggle[4] = "on";
             }
             else
@@ -249,12 +280,12 @@ public class HovedVindu extends JFrame implements ActionListener
                toggle[4] = "off";
             } 
         }
-       
         private void hideAll()
         {
             regMenu.setVisible(false);
             bookVindu.setVisible(false);
-            instrumentVindu.setVisible(false);
+            slettPanel.setVisible(false);
+            utleieVindu.setVisible(false);
             for(int i = 0; i < menuButtons.length; i++)
             {
                 menuButtons[i].setBackground(Color.DARK_GRAY);
@@ -273,17 +304,20 @@ public class HovedVindu extends JFrame implements ActionListener
            if(sokePanel.isVisible()==false)
            { sokePanel.setVisible(true);
            // hoho.setBounds(x-300, 4, 300,y-4);
-           sokePanel.scrollElev.setVisible(false);
+           //sokePanel.scrollElev.setVisible(false);
             //hoho.setLocation(x-300, 4);
             
      
            }
            if(sokestreng.matches("elev.*"))
-           {       finnElever();
-              
-               
+           {       
+               finnElever();
            }
-           else if(booka.checkExist(sokestreng)==true) 
+           else if (sokestreng.matches("logg"))
+           {
+               JOptionPane.showMessageDialog(null, hist.visAlt());
+           }
+           else if(booka.checkExists(sokestreng)==true) 
            { 
                findBookByRoomId();
            }
@@ -291,16 +325,18 @@ public class HovedVindu extends JFrame implements ActionListener
               // sokePanel.scrollElev.setVisible(false);
                
                findByName();
-           }
+          // }
            // hoho.setBounds(0, 0, 200, 200)
                     
               // hoho.pack();
               //  hoho
               //          .setVisible(true);
+         }
         }
         private void findByName()
         {
            sokePanel.scrollBook.setVisible(false);
+           
            sokePanel.modelElev.setRowCount(0);
            Pupil per = (Pupil)pers.finnPerson(sokeFelt.getText());
            LinkedList elevListe = (LinkedList) pers.getElevliste();
@@ -313,7 +349,9 @@ public class HovedVindu extends JFrame implements ActionListener
         }
         private void findBookByRoomId()
         {
+          // hideSokElement();
            sokePanel.scrollElev.setVisible(false);
+           sokePanel.scrollBook.setVisible(true);
            sokePanel.modelBook.setRowCount(0);
           // Rom rom = .finnPerson(sokeFelt.getText());
            String[][] bTableData = booka.getBookingTableData(); 
@@ -322,7 +360,7 @@ public class HovedVindu extends JFrame implements ActionListener
                if(bTableData[i][0].equalsIgnoreCase(sokeFelt.getText()))
                    sokePanel.modelBook.addRow(bTableData[i]);
            }
-           sokePanel.scrollBook.setVisible(true);
+    
            
                 // hoho.elevTable.setVisible(true);
            
@@ -345,6 +383,11 @@ public class HovedVindu extends JFrame implements ActionListener
                     }
                 }
         }
+        private void hideSokElement()
+        {
+            sokePanel.scrollElev.setVisible(false);
+            sokePanel.scrollBook.setVisible(false);
+        }
         //Metode for å lese fra fil
         private void readFile()
 	{
@@ -355,12 +398,15 @@ public class HovedVindu extends JFrame implements ActionListener
                         ObjectInputStream inFile3 = new ObjectInputStream
                             (new FileInputStream("src/booking.data"));
                             ObjectInputStream inFile4 = new ObjectInputStream
-                                    ( new FileInputStream("src/kursliste.data")))
+                                    ( new FileInputStream("src/kursliste.data"));
+                            ObjectInputStream inFile5 = new ObjectInputStream
+                                 ( new FileInputStream("src/instrumentliste.data")))
 	    {
 	      pers = (/*PersonRegister*/PersonListe) inFile.readObject();
               rom = (RomListe) inFile2.readObject();
               booka = (BookingListe) inFile3.readObject();
               kurs = (KursListe) inFile4.readObject();
+              iReg = (InstrumentRegister) inFile5.readObject();
 	    }
 	    catch(ClassNotFoundException cnfe)
 	    {
@@ -368,6 +414,7 @@ public class HovedVindu extends JFrame implements ActionListener
 	      //info.append("\nOppretter tom liste.\n");
 	      //pers = new PersonRegister();
                 pers = new PersonListe();
+                iReg = new InstrumentRegister();
 
 	    }
 	    catch(FileNotFoundException fne)
@@ -375,12 +422,14 @@ public class HovedVindu extends JFrame implements ActionListener
 	      //info.setText("Finner ikke datafil. Oppretter tom liste.\n");
 	      //pers = new PersonRegister();
                 pers = new PersonListe();
+                iReg = new InstrumentRegister();
 	    }
 	    catch(IOException ioe)
 	    {
 	      //info.setText("Innlesingsfeil. Oppretter tom liste.\n");
 	      //pers = new PersonRegister();
                 pers = new PersonListe();
+                iReg = new InstrumentRegister();
 
 	    }
 	  }
@@ -394,13 +443,16 @@ public class HovedVindu extends JFrame implements ActionListener
                         ObjectOutputStream outFile3 = new ObjectOutputStream(
                                 new FileOutputStream("src/booking.data"));
                          ObjectOutputStream outFile4 = new ObjectOutputStream(
-                                new FileOutputStream("src/kursliste.data")))
+                                new FileOutputStream("src/kursliste.data"));
+                        ObjectOutputStream outFile5 = new ObjectOutputStream(
+                                new FileOutputStream("src/instrumentliste.data")))
 		{
 			outFile.writeObject(pers);
                        
                         outFile2.writeObject(rom);
                         outFile3.writeObject(booka);
                          outFile4.writeObject(kurs);
+                         outFile5.writeObject(iReg);
 
 		}
 		catch( NotSerializableException nse )
@@ -433,10 +485,27 @@ public class HovedVindu extends JFrame implements ActionListener
             else if(event.getSource() == menuButtons[2])
                bookVindu();
             else if(event.getSource() == menuButtons[3])
-                JOptionPane.showMessageDialog(null, "functioning partially!");
+                utleieVindu();
             else if(event.getSource() == menuButtons[4])
-                InstrumentVindu();
+                SlettVindu();
             //else if(event.getSource() == menuButtons[5])
+            else if(event.getSource() == logg)
+            { 
+                try
+                {
+                    JTextArea textfelt = new JTextArea();
+                    
+                    textfelt.append(hist.visAlt());
+                    
+                    JScrollPane sp = new JScrollPane(textfelt);
+                    sp.setSize(100, 100);
+                    JOptionPane.showMessageDialog(null,sp);
+                }
+                catch (NullPointerException e)
+                {
+                    JOptionPane.showMessageDialog(null, "null");
+                }
+            }
                 
             else if(event.getSource() == save )
             {
